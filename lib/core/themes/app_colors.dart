@@ -25,6 +25,8 @@ class AppColors {
   static const Color grey600 = Color(0xFF484848);
   static const Color grey400 = Color(0xFF8D8D8D);
   static const Color grey100 = Color(0xFFF5F5F5);
+  static const Color description = Color(0xFF767676);
+  static const Color stroke = Color(0xFFB0B0B0);
 
 
   static Color withOpacity(Color color, double opacity) {
