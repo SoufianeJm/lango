@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'features/messages/screens/messages_list_screen.dart';
+import 'features/chat/screens/chat_screen.dart';
 
 void main() {
   runApp(const MyApp());
