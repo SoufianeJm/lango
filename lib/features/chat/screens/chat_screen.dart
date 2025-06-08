@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lango/core/widgets/app_back_bar.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input.dart';
 
@@ -17,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
       setState(() {
-        _messages.insert(0, {'text': text, 'isMe': true});
+        _messages.insert(0, {'text': text, 'isMe': true, 'time': DateTime.now()});
       });
       _controller.clear();
     }
@@ -26,9 +27,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chat')),
       body: Column(
         children: [
+          const AppBackBar(
+            title: 'Chat',
+            backIcon: 'assets/icons/ic_arrow_back.svg',
+            actionIcon: 'assets/icons/ic_shield_check.svg',
+          ),
           Expanded(
             child: ChatMessageList(messages: _messages),
           ),

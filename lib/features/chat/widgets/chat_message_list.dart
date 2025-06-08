@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'chat_bubble.dart';
 
 class ChatMessageList extends StatelessWidget {
-  final List<Map<String, dynamic>> messages; // Example: [{'text': 'Hi', 'isMe': true}]
+  final List<Map<String, dynamic>> messages; // Example: [{'text': 'Hi', 'isMe': true, 'time': DateTime.now()}]
 
   const ChatMessageList({
     Key? key,
@@ -19,6 +19,7 @@ class ChatMessageList extends StatelessWidget {
         return ChatBubble(
           message: msg['text'],
           isMe: msg['isMe'],
+          time: msg['time'] is DateTime ? msg['time'] : DateTime.parse(msg['time'].toString()),
         );
       },
     );
