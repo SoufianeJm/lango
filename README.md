@@ -1,6 +1,6 @@
-# 🛡️ Lango – Safe Language Exchange App (Flutter)
+# 🛡️ Belang – Safe Language Exchange App (Flutter)
 
-**Lango** is a privacy-first, AI-enhanced language exchange app designed to protect users from unwanted flirtation, harassment, and grooming through layered, adaptive moderation.  
+**Belang** is a privacy-first, AI-enhanced language exchange app designed to protect users from unwanted flirtation, harassment, and grooming through layered, adaptive moderation.  
 It blends fast, familiar messaging UI with innovative real-time safety features using lightweight on-device AI.
 
 ---
