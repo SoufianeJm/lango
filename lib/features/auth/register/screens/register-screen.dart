@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../login/screens/login-screen.dart';
 import 'package:flutter/services.dart';
+import 'package:lango/services/appwrite_service.dart';
 
 // --- Helper Widgets ---
 class RoundedTextField extends StatelessWidget {
@@ -128,13 +129,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _isLoading = true;
     });
-    // TODO: Implement registration logic here
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-    setState(() {
-      _isLoading = false;
-      // _errorMessage = 'Registration failed. Try again.'; // Uncomment to simulate error
-    });
-    // On success, navigate or show success message
+        try {
+      await AppwriteService.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        name: _firstNameController.text.trim() + ' ' + _lastNameController.text.trim(),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful! Please login.')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../register/screens/register-screen.dart';
 import '../../register/screens/register-screen.dart';
+import 'package:lango/services/appwrite_service.dart';
+import 'package:lango/features/messages/screens/messages_list_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -30,13 +32,44 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-    // TODO: Implement login logic here
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-    setState(() {
-      _isLoading = false;
-      // _errorMessage = 'Login failed. Try again.'; // Uncomment to simulate error
-    });
-    // On success, navigate or show success message
+    try {
+      // Check if there's an active session and log out if so
+      try {
+        final user = await AppwriteService.getCurrentUser();
+        if (user != null && user.$id != null) {
+          // Get all sessions for the user and delete the current one
+          // For now, try to delete the current session (assume 'current' session)
+          // If your AppwriteService supports getting current session ID, use it here
+          // Otherwise, catch and ignore errors
+          await AppwriteService.logout(sessionId: 'current');
+        }
+      } catch (_) {
+        // No session or unable to get user; ignore
+      }
+      await AppwriteService.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login successful!')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MessagesListScreen()),
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   @override
