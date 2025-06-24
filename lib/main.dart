@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'features/auth/register/screens/register-screen.dart';
+import 'main_navigation_shell.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
-      home: const RegisterScreen(),
+      home: const MainNavigationShell(),
     );
   }
 }
