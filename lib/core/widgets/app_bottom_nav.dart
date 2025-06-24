@@ -71,10 +71,8 @@ class AppBottomNav extends StatelessWidget {
                   isActive ? item.activeIcon : item.icon,
                   width: 24,
                   height: 24,
-                  colorFilter: ColorFilter.mode(
-                    isActive ? AppColors.black : AppColors.description,
-                    BlendMode.srcIn,
-                  ),
+                  // Only apply colorFilter to inactive icons
+                  colorFilter: isActive ? null : ColorFilter.mode(AppColors.description, BlendMode.srcIn),
                 ),
                 const SizedBox(height: 8),
                 Text(

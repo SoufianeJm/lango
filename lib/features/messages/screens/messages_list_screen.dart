@@ -3,6 +3,7 @@ import 'package:lango/core/widgets/app_back_bar.dart';
 import 'package:lango/core/widgets/app_bottom_nav.dart';
 import 'package:lango/features/messages/widgets/messages_search_input.dart';
 import 'package:lango/features/chat/screens/chat_screen.dart';
+import 'package:lango/features/profile/screens/profile-screen.dart';
 
 class MessagesListScreen extends StatelessWidget {
   const MessagesListScreen({super.key});
@@ -50,14 +51,9 @@ class MessagesListScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: AppBottomNav(
-        currentIndex: 3,
-        onTap: _onBottomNavTap,
-      ),
+
     );
   }
 
-  static void _onBottomNavTap(int index) {
-    print('Bottom nav tapped: $index');
-  }
+
 }

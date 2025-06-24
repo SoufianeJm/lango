@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../register/screens/register-screen.dart';
 import '../../register/screens/register-screen.dart';
 import 'package:lango/services/appwrite_service.dart';
-import 'package:lango/features/messages/screens/messages_list_screen.dart';
+import 'package:lango/main_navigation_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -54,12 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login successful!')),
-      );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MessagesListScreen()),
+        MaterialPageRoute(builder: (context) => const MainNavigationShell()),
       );
     } catch (e) {
       setState(() {
