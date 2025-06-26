@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../login/screens/login-screen.dart';
 import 'package:flutter/services.dart';
-import 'package:lango/services/appwrite_service.dart';
+import 'package:belang/services/appwrite_service.dart';
 
 // --- Helper Widgets ---
 class RoundedTextField extends StatelessWidget {
