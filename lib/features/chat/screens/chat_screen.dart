@@ -150,23 +150,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const UserListScreen(),
-              ),
-            );
-          },
-          backgroundColor: AppColors.purple,
-          child: const Icon(
-            Icons.people,
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 }

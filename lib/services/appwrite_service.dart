@@ -324,7 +324,33 @@ class AppwriteService {
     }
   }
 
-  /// Get all conversations for a user
+  /// Get all messages for a user (where they are sender or receiver)
+  static Future<List<Message>> getAllMessagesForUser(String userId) async {
+    try {
+      final result = await _databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: messagesCollectionId,
+        queries: [
+          Query.or([
+            Query.equal('senderId', userId),
+            Query.equal('receiverId', userId),
+          ]),
+          Query.orderDesc('\$createdAt'),
+        ],
+      );
+
+      return result.documents.map((doc) {
+        final data = doc.data;
+        data['\$id'] = doc.$id;
+        data['\$createdAt'] = doc.$createdAt;
+        return Message.fromMap(data);
+      }).toList();
+    } on AppwriteException catch (e) {
+      throw Exception(e.message ?? 'Failed to fetch messages');
+    }
+  }
+
+  /// Get all conversations for a user (kept for compatibility but not used)
   static Future<List<Map<String, dynamic>>> getUserConversations(String userId) async {
     try {
       final result = await _databases.listDocuments(

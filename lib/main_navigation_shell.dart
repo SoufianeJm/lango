@@ -37,23 +37,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           });
         },
       ),
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(bottom: 20), // Position above bottom nav
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const MessagesListScreen(),
-              ),
-            );
-          },
-          backgroundColor: AppColors.purple,
-          child: const Icon(
-            Icons.message,
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 }
