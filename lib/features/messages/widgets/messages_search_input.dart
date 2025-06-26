@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lango/core/themes/app_colors.dart';
-import 'package:lango/core/themes/typography.dart';
+import 'package:belang/core/themes/app_colors.dart';
+import 'package:belang/core/themes/typography.dart';
 
 class MessagesSearchInput extends StatelessWidget {
   final TextEditingController? controller;

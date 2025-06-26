@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../register/screens/register-screen.dart';
 import '../../register/screens/register-screen.dart';
-import 'package:lango/services/appwrite_service.dart';
-import 'package:lango/main_navigation_shell.dart';
+import 'package:belang/services/appwrite_service.dart';
+import 'package:belang/main_navigation_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

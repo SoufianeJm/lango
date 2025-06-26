@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lango/services/appwrite_service.dart';
-import 'package:lango/core/themes/app_colors.dart';
-import 'package:lango/core/themes/typography.dart';
+import 'package:belang/services/appwrite_service.dart';
+import 'package:belang/core/themes/app_colors.dart';
+import 'package:belang/core/themes/typography.dart';
 import 'package:appwrite/models.dart' as models;
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

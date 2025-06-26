@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lango/core/themes/typography.dart';
+import 'package:belang/core/themes/typography.dart';
 import 'package:intl/intl.dart';
 
 class ChatBubble extends StatelessWidget {

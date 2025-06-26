@@ -32,5 +32,5 @@ It blends fast, familiar messaging UI with innovative real-time safety features 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/SoufianeJm/lango.git
-cd lango
+git clone https://github.com/SoufianeJm/belang.git
+cd belang

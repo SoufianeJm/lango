@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:lango/core/widgets/app_back_bar.dart';
+import 'package:belang/core/widgets/app_back_bar.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input.dart';
+import 'package:belang/data/repository/appwrite_repository.dart';
+import 'dart:async';
+import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart' as models;
+
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  final String targetUserId;
+  final String? targetUserName;
+
+  const ChatScreen({Key? key, required this.targetUserId, this.targetUserName}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -13,14 +21,106 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
+  StreamSubscription? _subscription;
+  String? _currentUserId;
 
-  void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isNotEmpty) {
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUserId();
+    _subscribeToMessages();
+  }
+
+  Future<void> _getCurrentUserId() async {
+    try {
+      final account = AppwriteRepository().account;
+      final user = await account.get();
       setState(() {
-        _messages.insert(0, {'text': text, 'isMe': true, 'time': DateTime.now()});
+        _currentUserId = user.$id;
       });
-      _controller.clear();
+      await _loadMessageHistory();
+    } catch (e) {
+      // Handle error (e.g., show a dialog or redirect to login)
+      print('Failed to get current user: $e');
+    }
+  }
+
+  Future<void> _loadMessageHistory() async {
+    if (_currentUserId == null) return;
+    final myUserId = _currentUserId!;
+    final targetUserId = widget.targetUserId;
+    try {
+      final messages = await AppwriteRepository().getMessagesBetweenUsers(
+        userA: myUserId,
+        userB: targetUserId,
+      );
+      setState(() {
+        _messages.clear();
+        _messages.addAll(messages.map((msg) => {
+          'text': msg.content,
+          'isMe': msg.senderId == myUserId,
+          'time': DateTime.tryParse(msg.createdAt) ?? DateTime.now(),
+        }));
+      });
+    } catch (e) {
+      print('Failed to load message history: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  void _subscribeToMessages() {
+    final client = AppwriteRepository().client;
+    final realtime = Realtime(client);
+    // Listen for document creation in the messages collection
+    _subscription = realtime.subscribe([
+      'databases.${AppwriteRepository.databaseId}.collections.${AppwriteRepository.messagesCollectionId}.documents',
+    ]).stream.listen((event) {
+      if (event.events.contains('databases.*.collections.*.documents.*.create')) {
+        final data = event.payload;
+        // Only add messages relevant to this conversation
+        if (_currentUserId == null) return;
+        final myUserId = _currentUserId!;
+        if ((data['senderId'] == myUserId && data['receiverId'] == widget.targetUserId) ||
+            (data['senderId'] == widget.targetUserId && data['receiverId'] == myUserId)) {
+          setState(() {
+            _messages.insert(0, {
+              'text': data['content'],
+              'isMe': data['senderId'] == myUserId,
+              'time': DateTime.tryParse(data['\$createdAt'] ?? '') ?? DateTime.now(),
+            });
+          });
+        }
+      }
+    });
+  }
+
+  void _sendMessage() async {
+    final text = _controller.text.trim();
+    if (text.isNotEmpty && _currentUserId != null) {
+      final senderId = _currentUserId!;
+      final receiverId = widget.targetUserId;
+
+      // Send to Appwrite
+      try {
+        await AppwriteRepository().sendMessage(
+          senderId: senderId,
+          receiverId: receiverId,
+          content: text,
+        );
+        _controller.clear();
+      } catch (e) {
+        // Handle error (show a snackbar, etc.)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send message: '
+              + (e.toString())),
+          ),
+        );
+      }
     }
   }
 
@@ -29,8 +129,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const AppBackBar(
-            title: 'Chat',
+          AppBackBar(
+            title: widget.targetUserName ?? widget.targetUserId,
             backIcon: 'assets/icons/ic_arrow_back.svg',
             actionIcon: 'assets/icons/ic_shield_check.svg',
           ),
