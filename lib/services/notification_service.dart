@@ -102,7 +102,6 @@ class NotificationService {
       priority: Priority.high,
       showWhen: false,
       icon: '@mipmap/ic_launcher',
-      sound: RawResourceAndroidNotificationSound('notification_sound'),
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
