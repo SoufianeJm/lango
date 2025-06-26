@@ -3,8 +3,6 @@ import 'package:belang/core/widgets/app_back_bar.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input.dart';
 import 'package:belang/services/appwrite_service.dart';
-import 'package:belang/features/messages/screens/user_list_screen.dart';
-import 'package:belang/core/themes/app_colors.dart';
 import 'dart:async';
 import 'package:appwrite/appwrite.dart';
 
@@ -22,17 +20,17 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
-  StreamSubscription? _subscription;
-  String? _currentUserId;
+StreamSubscription? _subscription;
+String? _currentUserId;
 
   @override
   void initState() {
     super.initState();
     _getCurrentUserId();
-    _subscribeToMessages();
-  }
+_subscribeToMessages();
+}
 
-  Future<void> _getCurrentUserId() async {
+Future<void> _getCurrentUserId() async {
     try {
       final user = await AppwriteService.getCurrentUser();
       setState(() {
@@ -91,13 +89,15 @@ class _ChatScreenState extends State<ChatScreen> {
         final myUserId = _currentUserId!;
         if ((data['senderId'] == myUserId && data['receiverId'] == widget.targetUserId) ||
             (data['senderId'] == widget.targetUserId && data['receiverId'] == myUserId)) {
-          setState(() {
-            _messages.insert(0, {
-              'text': data['content'],
-              'isMe': data['senderId'] == myUserId,
-              'time': DateTime.tryParse(data['\$createdAt'] ?? '') ?? DateTime.now(),
-            });
+setState(() {
+          _messages.insert(0, {
+            'text': data['content'],
+            'isMe': data['senderId'] == myUserId,
+            'time': DateTime.tryParse(data['\$createdAt'] ?? '') ?? DateTime.now(),
           });
+        });
+
+        // Notifications are handled by the global NotificationService
         }
       }
     });

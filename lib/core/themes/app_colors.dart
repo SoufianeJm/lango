@@ -4,7 +4,8 @@ class AppColors {
 
   static const Color black = Color(0xFF0B0B0B);
   static const Color white = Color(0xFFFFFFFF);
-  static const Color purple = Color(0xFF8000AA); 
+  static const Color primary = Color(0xFF8000AA);
+  static const Color purple = Color(0xFF8000AA);
   static const LinearGradient brandGradient = LinearGradient(
     colors: [
       Color(0xFFAE0EFF),

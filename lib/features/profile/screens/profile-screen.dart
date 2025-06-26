@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:belang/services/appwrite_service.dart';
+import 'package:belang/services/notification_service.dart';
 import 'package:belang/features/auth/login/screens/login-screen.dart';
 import 'edit_profile_screen.dart';
 
@@ -104,6 +105,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 elevation: 0,
                               ),
                               child: const Text('Edit Profile'),
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await NotificationService().testNotification();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Test notification sent! Check your notification panel.'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: const Text('Test Notifications'),
                             ),
                             const SizedBox(height: 12),
                             TextButton(
