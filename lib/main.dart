@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'features/auth/register/screens/register-screen.dart';
 import 'features/auth/login/screens/login-screen.dart';
 import 'services/appwrite_service.dart';
 import 'main_navigation_shell.dart';

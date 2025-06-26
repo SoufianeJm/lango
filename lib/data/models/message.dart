@@ -21,7 +21,7 @@ class Message {
       receiverId: map['receiverId'] ?? '',
       content: map['content'] ?? '',
       id: map['\$id'] ?? '',
-      createdAt: map['\$createdAt'] ?? '',
+      createdAt: map['timestamp'] ?? map['\$createdAt'] ?? '', // Use timestamp field from your DB
     );
   }
 }

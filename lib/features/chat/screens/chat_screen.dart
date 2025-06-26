@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:belang/core/widgets/app_back_bar.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input.dart';
-import 'package:belang/data/repository/appwrite_repository.dart';
+import 'package:belang/services/appwrite_service.dart';
 import 'dart:async';
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart' as models;
 
 
 class ChatScreen extends StatefulWidget {
@@ -33,8 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _getCurrentUserId() async {
     try {
-      final account = AppwriteRepository().account;
-      final user = await account.get();
+      final user = await AppwriteService.getCurrentUser();
       setState(() {
         _currentUserId = user.$id;
       });
@@ -50,9 +48,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final myUserId = _currentUserId!;
     final targetUserId = widget.targetUserId;
     try {
-      final messages = await AppwriteRepository().getMessagesBetweenUsers(
-        userA: myUserId,
-        userB: targetUserId,
+      final messages = await AppwriteService.getMessagesBetweenUsers(
+        user1Id: myUserId,
+        user2Id: targetUserId,
       );
       setState(() {
         _messages.clear();
@@ -74,11 +72,15 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _subscribeToMessages() {
-    final client = AppwriteRepository().client;
+    // Create a realtime client for listening to message updates
+    final client = Client()
+        .setEndpoint('https://cloud.appwrite.io/v1')
+        .setProject('6855dd6b003ce2cab4ff');
     final realtime = Realtime(client);
+    
     // Listen for document creation in the messages collection
     _subscription = realtime.subscribe([
-      'databases.${AppwriteRepository.databaseId}.collections.${AppwriteRepository.messagesCollectionId}.documents',
+      'databases.685c69ca0000f9d61a7a.collections.messages.documents',
     ]).stream.listen((event) {
       if (event.events.contains('databases.*.collections.*.documents.*.create')) {
         final data = event.payload;
@@ -107,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
       // Send to Appwrite
       try {
-        await AppwriteRepository().sendMessage(
+        await AppwriteService.sendMessage(
           senderId: senderId,
           receiverId: receiverId,
           content: text,

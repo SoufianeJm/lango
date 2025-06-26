@@ -1,8 +1,50 @@
 import 'package:flutter/material.dart';
 import '../../register/screens/register-screen.dart';
-import '../../register/screens/register-screen.dart';
 import 'package:belang/services/appwrite_service.dart';
 import 'package:belang/main_navigation_shell.dart';
+
+// --- Helper Widgets ---
+class RoundedTextField extends StatelessWidget {
+  final TextEditingController? controller;
+  final String label;
+  final String hint;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+
+  const RoundedTextField({
+    Key? key,
+    this.controller,
+    required this.label,
+    required this.hint,
+    this.keyboardType,
+    this.obscureText = false,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.validator,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        hintText: hint,
+        suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
+      ),
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      validator: validator,
+    );
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

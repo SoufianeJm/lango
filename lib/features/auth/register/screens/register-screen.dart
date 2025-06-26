@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../login/screens/login-screen.dart';
-import 'package:flutter/services.dart';
 import 'package:belang/services/appwrite_service.dart';
 
 // --- Helper Widgets ---
@@ -130,11 +129,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
         try {
-      await AppwriteService.register(
+      // Register the user with Appwrite Auth
+      final user = await AppwriteService.register(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         name: _firstNameController.text.trim() + ' ' + _lastNameController.text.trim(),
       );
+      
+      // Create user document in custom users collection
+      await AppwriteService.createUserDocument(
+        userId: user.$id,
+        name: _firstNameController.text.trim() + ' ' + _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+      );
+      
       setState(() {
         _isLoading = false;
       });
