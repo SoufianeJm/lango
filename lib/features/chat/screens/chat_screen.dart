@@ -3,6 +3,8 @@ import 'package:belang/core/widgets/app_back_bar.dart';
 import '../widgets/chat_message_list.dart';
 import '../widgets/chat_input.dart';
 import 'package:belang/services/appwrite_service.dart';
+import 'package:belang/features/messages/screens/user_list_screen.dart';
+import 'package:belang/core/themes/app_colors.dart';
 import 'dart:async';
 import 'package:appwrite/appwrite.dart';
 
@@ -147,6 +149,23 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const UserListScreen(),
+              ),
+            );
+          },
+          backgroundColor: AppColors.purple,
+          child: const Icon(
+            Icons.people,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
