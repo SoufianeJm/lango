@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:belang/core/themes/typography.dart';
+import 'package:belang/core/themes/app_colors.dart';
 import 'package:intl/intl.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -27,15 +28,15 @@ class ChatBubble extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: isMe ? Colors.black : AppColors.grey100,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               message,
               style: AppTypography.bodyMediumRegular.copyWith(
-  color: Colors.white,
-  fontWeight: FontWeight.w400,
-),
+                color: isMe ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ),
