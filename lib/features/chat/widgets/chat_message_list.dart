@@ -20,6 +20,7 @@ class ChatMessageList extends StatelessWidget {
           message: msg['text'],
           isMe: msg['isMe'],
           time: msg['time'] is DateTime ? msg['time'] : DateTime.parse(msg['time'].toString()),
+          isRead: msg['isRead'], // Pass read status
         );
       },
     );

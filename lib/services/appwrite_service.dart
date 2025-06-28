@@ -282,6 +282,7 @@ class AppwriteService {
           'receiverId': receiverId,
           'content': content,
           'timestamp': DateTime.now().toIso8601String(),
+          'isRead': false, // New messages start as unread
         },
       );
     } on AppwriteException catch (e) {
@@ -369,6 +370,64 @@ class AppwriteService {
       }).toList();
     } on AppwriteException catch (e) {
       throw Exception(e.message ?? 'Failed to fetch conversations');
+    }
+  }
+
+  /// Mark messages as read
+  static Future<void> markMessagesAsRead({
+    required String currentUserId,
+    required String otherUserId,
+  }) async {
+    try {
+      // Get all unread messages where current user is the receiver
+      final result = await _databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: messagesCollectionId,
+        queries: [
+          Query.and([
+            Query.equal('senderId', otherUserId),
+            Query.equal('receiverId', currentUserId),
+            Query.equal('isRead', false),
+          ]),
+        ],
+      );
+
+      // Update each unread message to mark as read
+      for (final doc in result.documents) {
+        await _databases.updateDocument(
+          databaseId: databaseId,
+          collectionId: messagesCollectionId,
+          documentId: doc.$id,
+          data: {
+            'isRead': true,
+          },
+        );
+      }
+    } on AppwriteException catch (e) {
+      throw Exception(e.message ?? 'Failed to mark messages as read');
+    }
+  }
+
+  /// Get unread message count between users
+  static Future<int> getUnreadMessageCount({
+    required String currentUserId,
+    required String otherUserId,
+  }) async {
+    try {
+      final result = await _databases.listDocuments(
+        databaseId: databaseId,
+        collectionId: messagesCollectionId,
+        queries: [
+          Query.and([
+            Query.equal('senderId', otherUserId),
+            Query.equal('receiverId', currentUserId),
+            Query.equal('isRead', false),
+          ]),
+        ],
+      );
+      return result.documents.length;
+    } on AppwriteException catch (e) {
+      throw Exception(e.message ?? 'Failed to get unread message count');
     }
   }
 }

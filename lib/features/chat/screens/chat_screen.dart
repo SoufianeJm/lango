@@ -58,8 +58,12 @@ Future<void> _getCurrentUserId() async {
           'text': msg.content,
           'isMe': msg.senderId == myUserId,
           'time': DateTime.tryParse(msg.createdAt) ?? DateTime.now(),
+          'isRead': msg.isRead,
         }));
       });
+      
+      // Mark messages as read when loading conversation
+      await _markMessagesAsRead();
     } catch (e) {
       print('Failed to load message history: $e');
     }
@@ -82,7 +86,7 @@ Future<void> _getCurrentUserId() async {
     _subscription = realtime.subscribe([
       'databases.685c69ca0000f9d61a7a.collections.messages.documents',
     ]).stream.listen((event) {
-      if (event.events.contains('databases.*.collections.*.documents.*.create')) {
+        if (event.events.contains('databases.*.collections.*.documents.*.create')) {
         final data = event.payload;
         // Only add messages relevant to this conversation
         if (_currentUserId == null) return;
@@ -93,14 +97,66 @@ setState(() {
           _messages.insert(0, {
             'text': data['content'],
             'isMe': data['senderId'] == myUserId,
-            'time': DateTime.tryParse(data['\$createdAt'] ?? '') ?? DateTime.now(),
+'time': DateTime.tryParse(data['\$createdAt'] ?? '') ?? DateTime.now(),
+            'isRead': data['isRead'] ?? false,
           });
         });
 
+        // Mark messages as read if they are from the other user
+        if (data['senderId'] == widget.targetUserId) {
+          _markMessagesAsRead();
+        }
+        
         // Notifications are handled by the global NotificationService
+        }
+      } else if (event.events.contains('databases.*.collections.*.documents.*.update')) {
+        // Handle message updates (like read status changes)
+        final data = event.payload;
+        if (_currentUserId == null) return;
+        final myUserId = _currentUserId!;
+        
+        // Update read status for messages in this conversation
+        if ((data['senderId'] == myUserId && data['receiverId'] == widget.targetUserId) ||
+            (data['senderId'] == widget.targetUserId && data['receiverId'] == myUserId)) {
+          setState(() {
+            for (int i = 0; i < _messages.length; i++) {
+              // Update the specific message if we can match it
+              if (_messages[i]['time'] != null) {
+                final messageTime = _messages[i]['time'] as DateTime;
+final updatedTime = DateTime.tryParse(data['\$createdAt'] ?? '');
+                if (updatedTime != null && 
+                    messageTime.difference(updatedTime).abs().inSeconds < 2) {
+                  _messages[i]['isRead'] = data['isRead'] ?? false;
+                }
+              }
+            }
+          });
         }
       }
     });
+  }
+
+  /// Mark all unread messages from the target user as read
+  Future<void> _markMessagesAsRead() async {
+    if (_currentUserId == null) return;
+    
+    try {
+      await AppwriteService.markMessagesAsRead(
+        currentUserId: _currentUserId!,
+        otherUserId: widget.targetUserId,
+      );
+      
+      // Update local message state to reflect read status
+      setState(() {
+        for (int i = 0; i < _messages.length; i++) {
+          if (!_messages[i]['isMe']) {
+            _messages[i]['isRead'] = true;
+          }
+        }
+      });
+    } catch (e) {
+      print('Failed to mark messages as read: $e');
+    }
   }
 
   void _sendMessage() async {
