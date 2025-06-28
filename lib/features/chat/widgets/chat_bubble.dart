@@ -7,12 +7,14 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final bool isMe;
   final DateTime time;
+  final bool? isRead; // Optional read status for sent messages
 
   const ChatBubble({
     Key? key,
     required this.message,
     required this.isMe,
     required this.time,
+    this.isRead,
   }) : super(key: key);
 
   @override
@@ -46,13 +48,27 @@ class ChatBubble extends StatelessWidget {
             right: isMe ? 16 : 0,
             bottom: 2,
           ),
-          child: Text(
-            DateFormat('hh:mm a').format(time).replaceAll('AM', 'Am').replaceAll('PM', 'Pm'),
-            style: AppTypography.bodyMediumRegular.copyWith(
-              color: Colors.grey[600],
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                DateFormat('hh:mm a').format(time).replaceAll('AM', 'Am').replaceAll('PM', 'Pm'),
+                style: AppTypography.bodyMediumRegular.copyWith(
+                  color: Colors.grey[600],
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              // Show read receipt for sent messages
+              if (isMe && isRead != null) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  isRead! ? Icons.done_all : Icons.done,
+                  size: 16,
+                  color: isRead! ? Colors.blue : Colors.grey[600],
+                ),
+              ],
+            ],
           ),
         ),
       ],
